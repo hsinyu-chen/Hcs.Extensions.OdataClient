@@ -70,11 +70,15 @@ namespace Hcs.Extensions.OdataClient
         protected virtual async ValueTask<IEnumerable<TModel>> ParseResponseAsync(HttpResponseMessage httpResponse)
         {
             var content = httpResponse.Content;
+#if DEBUG
+
+            var js = await content.ReadAsStringAsync();
+#endif
+            httpResponse.EnsureSuccessStatusCode();
+           
             if (content.Headers.ContentType?.MediaType == "application/json")
             {
-#if DEBUG
-                var js = await content.ReadAsStringAsync();
-#endif
+
                 return await JsonSerializer.DeserializeAsync<TModel[]>(await content.ReadAsStreamAsync());
             }
             else

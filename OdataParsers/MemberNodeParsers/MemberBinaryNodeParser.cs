@@ -20,11 +20,11 @@ namespace Hcs.Extensions.Odata.Queryable.OdataParsers
                     {
                         names = names.Prepend(context.ModelParameter.Name);
                     }
-                   
+
                     output = string.Join("/", names);
                     return true;
                 }
-                else if (root is ConstantExpression)
+                else if (root is ConstantExpression || root is null)
                 {
                     var value = Expression.Lambda<Func<object>>(Expression.Convert(member, typeof(object))).Compile()();
                     output = ExpressionHelpers.GetEscapedValue(value, context.ReferenceNode);
@@ -35,5 +35,5 @@ namespace Hcs.Extensions.Odata.Queryable.OdataParsers
             return false;
         }
     }
-    
+
 }

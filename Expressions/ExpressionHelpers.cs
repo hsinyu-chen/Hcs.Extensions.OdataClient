@@ -131,7 +131,7 @@ namespace Hcs.Extensions.OdataClient.Expressions
             {
                 return "null";
             }
-            var type = expressionOpside.GetMemberType();
+            Type type = expressionOpside.GetMemberType() ?? value.GetType();
             if (type == typeof(string))
                 return $"'{((string)value).Replace("'", "\\'")}'";
             else if (type == typeof(bool))
@@ -139,6 +139,14 @@ namespace Hcs.Extensions.OdataClient.Expressions
             else if (type != null && type.IsEnum)
             {
                 return $"'{Enum.ToObject(type, value).ToString().Replace("'", "\\'")}'";
+            }
+            else if (value is DateTime date)
+            {
+                return date.ToUniversalTime().ToString("s", System.Globalization.CultureInfo.InvariantCulture) + "Z";
+            }
+            else if (value is DateTimeOffset dateof)
+            {
+                return dateof.ToUniversalTime().ToString("s", System.Globalization.CultureInfo.InvariantCulture) + "Z";
             }
             return value.ToString();
         }

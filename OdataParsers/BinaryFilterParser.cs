@@ -26,7 +26,7 @@ namespace Hcs.Extensions.Odata.Queryable.OdataParsers
                         if (ValueOrMemberParser.TryParse(context.CreateChild(binary.Left, binary.Right), withParameterName, out string left1)
                             && ValueOrMemberParser.TryParse(context.CreateChild(binary.Right, binary.Left), withParameterName, out string right1))
                         {
-                            output = $"{left1} {context.Node.NodeType.ToCompareOperator()} {right1}";
+                            output = $"({left1} {context.Node.NodeType.ToCompareOperator()} {right1})";
                             return true;
                         }
                         break;
