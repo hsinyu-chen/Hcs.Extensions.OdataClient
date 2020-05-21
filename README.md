@@ -39,6 +39,13 @@ for someone only use OdataQueryOptions for Query api like me
 services.AddOData();
 services.AddODataQueryFilter();
 services.AddSingleton<ODataUriResolver, StringAsEnumResolver>();
+//for .net core 3.1 you need replace built in json serializer for odata $select/$expand working
+services.AddControllersWithViews().AddNewtonsoftJson(options =>
+{
+    options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+    options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
+    options.SerializerSettings.StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml;
+});
 ```
 ### endpoint
 ```csharp
@@ -95,3 +102,6 @@ if (response.HttpResponse.Headers.TryGetValues("x-total-count", out IEnumerable<
 }
 ```
 you can create an extension methodfor this
+
+## WARNING
+I wrote this lib in rush,so use with your own risk
