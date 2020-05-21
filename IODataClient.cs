@@ -12,7 +12,7 @@ namespace Hcs.Extensions.OdataClient
         public OdataQueryOptions<TModel, TResult> QueryOptions { get; }
         public string GetQueryString(bool encode = true);
 
-        public Task<IEnumerable<TResult>> SendReqeust();
+        public Task<OdataApiResponse<TResult>> SendReqeust();
     }
     public interface IODataClient<TModel>
     {
@@ -21,6 +21,6 @@ namespace Hcs.Extensions.OdataClient
         public OdataQueryOptions<TModel> QueryOptions { get; }
         public IODataClient<TModel> Clone();
         public string GetQueryString(bool encode = true);
-        public Task<IEnumerable<TModel>> SendRequet();
+        public Task<OdataApiResponse<TModel>> SendRequet();
     }
 }

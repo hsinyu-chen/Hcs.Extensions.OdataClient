@@ -2,7 +2,6 @@
 using Hcs.Extensions.Odata.Queryable.Expressions;
 using Hcs.Extensions.OdataClient.Expressions;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -40,10 +39,10 @@ namespace Hcs.Extensions.OdataClient
             var queryBuilder = new OdataQueryBuilder<TModel, TResult>();
             return queryBuilder.Build(QueryOptions);
         }
-        public async Task<IEnumerable<TResult>> SendReqeust()
+        public async Task<OdataApiResponse<TResult>> SendReqeust()
         {
             var baseResult = await base.SendRequet();
-            return Projection(baseResult);
+            return new OdataApiResponse<TResult>(Projection(baseResult), baseResult.HttpResponse);
         }
 
     }
@@ -88,9 +87,16 @@ namespace Hcs.Extensions.OdataClient
             return await client.GetAsync(odataUrl);
         }
 
-        public virtual async Task<IEnumerable<TModel>> SendRequet()
+        public virtual async Task<OdataApiResponse<TModel>> SendRequet()
         {
+            var uri = CreateRequestUrl();
+            var response = await SendRequestAsnyc(HttpClient, uri);
+            var data = await ParseResponseAsync(response);
+            return new OdataApiResponse<TModel>(data, response);
+        }
 
+        protected virtual Uri CreateRequestUrl()
+        {
             var query = GetQuery();
             var uri = new Uri(HttpClient.BaseAddress, ApiUri);
             var q = new List<string>(uri.Query.Trim('?').Split('&').Where(x => !string.IsNullOrWhiteSpace(x)));
@@ -104,9 +110,8 @@ namespace Hcs.Extensions.OdataClient
                 builder.Query = "?" + string.Join("&", q);
                 uri = builder.Uri;
             }
-            var response = await SendRequestAsnyc(HttpClient, uri);
-            var data = await ParseResponseAsync(response);
-            return data;
+
+            return uri;
         }
 
         protected virtual IEnumerable<KeyValuePair<string, string>> GetQuery()
