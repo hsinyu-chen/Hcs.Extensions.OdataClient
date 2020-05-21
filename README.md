@@ -1,7 +1,7 @@
 # Hcs.Extensions.OdataClient
 C# simple odata client with no $metadata needed 
 for someone only use OdataQueryOptions for Query api like me
-## install package
+## Install package
 ```Install-Package Hcs.Extensions.OdataClient```
 ## use
 ```csharp
@@ -22,7 +22,7 @@ foreach (var result in await req.SendReqeust())
 }
 ```
 
-## excute result
+# excute result
 ```
 ?$filter=CategoryId ne null and (CategoryId ne null and (Category/Id add 10) lt 100)&$orderby=Path asc,Name asc&$top=100&$count=true&$select=Id,Path&$expand=Category($select=Name)
 
@@ -33,9 +33,9 @@ foreach (var result in await req.SendReqeust())
 
 ```
 # Server side configuration for .net core 
-## Install package
+### Install package
 ```Microsoft.AspNetCore.OData```
-## Add services
+### Add services
 ```csharp
 services.AddOData();
 services.AddODataQueryFilter();
@@ -48,7 +48,7 @@ services.AddControllersWithViews().AddNewtonsoftJson(options =>
     options.SerializerSettings.StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml;
 });
 ```
-## Config endpoint
+### Config endpoint
 ```csharp
 app.UseEndpoints(endpoints =>
 {
@@ -57,7 +57,7 @@ app.UseEndpoints(endpoints =>
     // ....
 });
 ```
-## Controller
+### Controller
 ```csharp
 [Route("api/[controller]")]
 [ApiController]
