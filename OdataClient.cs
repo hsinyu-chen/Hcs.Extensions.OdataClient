@@ -22,9 +22,6 @@ namespace Hcs.Extensions.OdataClient
 
         new public OdataQueryOptions<TModel, TResult> QueryOptions { get; }
 
-        HttpClient IODataClient<TModel, TResult>.HttpClient => throw new NotImplementedException();
-
-        string IODataClient<TModel, TResult>.ApiUri => throw new NotImplementedException();
 
         OdataQueryOptions<TModel, TResult> IODataClient<TModel, TResult>.QueryOptions => throw new NotImplementedException();
 
