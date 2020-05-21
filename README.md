@@ -1,7 +1,8 @@
 # Hcs.Extensions.OdataClient
 C# simple odata client with no $metadata needed 
 for someone only use OdataQueryOptions for Query api like me
-
+## install package
+```Install-Package Hcs.Extensions.OdataClient```
 ## use
 ```csharp
     var maxId = 100;
