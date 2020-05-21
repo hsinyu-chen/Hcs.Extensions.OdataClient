@@ -104,5 +104,5 @@ if (response.HttpResponse.Headers.TryGetValues("x-total-count", out IEnumerable<
 you can create an extension methodfor this
 
 ## WARNING
-I wrote this lib in rush (about 20 hours),so use with your own risk
+I wrote this lib in rush (about 20 hours),so use with your own risk,
 feel free to file a PR if you encounter any bugs
