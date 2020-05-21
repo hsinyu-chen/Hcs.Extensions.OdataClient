@@ -1,12 +1,14 @@
 ﻿using Hcs.Extensions.Odata.Queryable;
 using System;
 using System.Linq.Expressions;
+using System.Net.Http;
 
 namespace Hcs.Extensions.OdataClient
 {
     public static class IODataClientExtensions
     {
-
+        public static IODataClient<TModel> GetOdataClient<TModel>(this HttpClient httpClient, string uri) where TModel : class
+           => new OdataClient<TModel>(httpClient, uri);
         public static IODataClient<TModel> OrderBy<TModel>(this IODataClient<TModel> client, Expression<Func<TModel, object>> expression) where TModel : class
         {
             var o = client.Clone();
