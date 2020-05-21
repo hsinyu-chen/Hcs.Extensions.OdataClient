@@ -5,20 +5,21 @@ for someone only use OdataQueryOptions for Query api like me
 ```Install-Package Hcs.Extensions.OdataClient```
 ## use
 ```csharp
-    var maxId = 100;
-    var req = httpClient.GetOdataClient<File>("/api/FileManage")
-                .Where(x => x.CategoryId.HasValue)
-                .Where(x => x.CategoryId.HasValue && x.Category.Id + 10 < maxId)
-                .OrderBy(x => x.Path).ThenBy(x => x.Name)
-                .Take(100)
-                .Select(x => new { brand_new_id_property = x.Id, x.Path, xxxx = new { x.Category.Name } });
+var httpClient = new HttpClient { BaseAddress = new Uri("https://localhost:44326/") };
+var maxId = 100;
+var req = httpClient.GetOdataClient<File>("/api/FileManage")
+            .Where(x => x.CategoryId.HasValue)
+            .Where(x => x.CategoryId.HasValue && x.Category.Id + 10 < maxId)
+            .OrderBy(x => x.Path).ThenBy(x => x.Name)
+            .Take(100)
+            .Select(x => new { brand_new_id_property = x.Id, x.Path, xxxx = new { x.Category.Name } });
 
-    Console.WriteLine(req.GetQueryString(encode: false));
+Console.WriteLine(req.GetQueryString(encode: false));
 
-    foreach (var result in await req.SendReqeust())
-    {
-        Console.WriteLine($"{result.brand_new_id_property} {result.xxxx.Name}");
-    }
+foreach (var result in await req.SendReqeust())
+{
+    Console.WriteLine($"{result.brand_new_id_property} {result.xxxx.Name}");
+}
 ```
 
 ## excute result
