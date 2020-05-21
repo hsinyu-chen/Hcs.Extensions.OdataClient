@@ -3,7 +3,7 @@ C# simple odata client with no $metadata needed
 for someone only use OdataQueryOptions for Query api like me
 ## Install package
 ```Install-Package Hcs.Extensions.OdataClient```
-## use
+## Use
 ```csharp
 var httpClient = new HttpClient { BaseAddress = new Uri("https://localhost:44326/") };
 var maxId = 100;
@@ -22,7 +22,7 @@ foreach (var result in await req.SendReqeust())
 }
 ```
 
-# excute result
+### excute result
 ```
 ?$filter=CategoryId ne null and (CategoryId ne null and (Category/Id add 10) lt 100)&$orderby=Path asc,Name asc&$top=100&$count=true&$select=Id,Path&$expand=Category($select=Name)
 
