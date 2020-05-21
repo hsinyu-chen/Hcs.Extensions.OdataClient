@@ -32,10 +32,10 @@ foreach (var result in await req.SendReqeust())
 5 A
 
 ```
-## server side configuration for .net core 
-### install package
+# Server side configuration for .net core 
+## Install package
 ```Microsoft.AspNetCore.OData```
-### add services
+## Add services
 ```csharp
 services.AddOData();
 services.AddODataQueryFilter();
@@ -48,7 +48,7 @@ services.AddControllersWithViews().AddNewtonsoftJson(options =>
     options.SerializerSettings.StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml;
 });
 ```
-### endpoint
+## Config endpoint
 ```csharp
 app.UseEndpoints(endpoints =>
 {
@@ -57,7 +57,7 @@ app.UseEndpoints(endpoints =>
     // ....
 });
 ```
-### controller
+## Controller
 ```csharp
 [Route("api/[controller]")]
 [ApiController]
@@ -75,7 +75,7 @@ public class FileManageController : ControllerBase
     }
 }
 ```
-## count
+# Count
 you can replace odata's EnableQueryAttribute to custom ```ActionFilter``` like this
 ```csharp
 public class HcsEnableQueryAttribute : EnableQueryAttribute
@@ -104,6 +104,6 @@ if (response.HttpResponse.Headers.TryGetValues("x-total-count", out IEnumerable<
 ```
 you can create an extension methodfor this
 
-## WARNING
+# WARNING
 I wrote this lib in rush (about 20 hours),so use with your own risk,
 feel free to file a PR if you encounter any bugs
