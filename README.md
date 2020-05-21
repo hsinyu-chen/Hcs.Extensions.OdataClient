@@ -1,5 +1,6 @@
 # Hcs.Extensions.OdataClient
 C# simple odata client with no $metadata needed 
+for someone only use OdataQueryOptions for Query api like me
 
 ## use
 ```csharp
@@ -29,3 +30,67 @@ C# simple odata client with no $metadata needed
 5 A
 
 ```
+## server side configuration for .net core 
+### install package
+```Microsoft.AspNetCore.OData```
+### add services
+```csharp
+services.AddOData();
+services.AddODataQueryFilter();
+services.AddSingleton<ODataUriResolver, StringAsEnumResolver>();
+```
+### endpoint
+```csharp
+app.UseEndpoints(endpoints =>
+{
+    endpoints.EnableDependencyInjectionForOdata();
+    endpoints.Count().Filter().OrderBy().Expand().Select().MaxTop(100); //allow complex query function
+    // ....
+});
+```
+### controller
+```csharp
+[Route("api/[controller]")]
+[ApiController]
+public class FileManageController : ControllerBase
+{
+    DbContext context;
+    public FileManageController(DbContext context)
+    {
+        this.context = context;
+    }
+    [EnableQuery]
+    public IActionResult Get()
+    {
+        return Ok(context.Set<File>().AsQueryable());
+    }
+}
+```
+## count
+you can replace odata's EnableQueryAttribute to custom ```ActionFilter``` like this
+```csharp
+public class HcsEnableQueryAttribute : EnableQueryAttribute
+{
+    public override void OnActionExecuted(ActionExecutedContext actionExecutedContext)
+    {
+        base.OnActionExecuted(actionExecutedContext);
+        var odata = actionExecutedContext.HttpContext.ODataFeature();
+
+        if (odata.TotalCount.HasValue)
+        {
+            actionExecutedContext.HttpContext.Response.Headers.Add("x-total-count", odata.TotalCount.Value.ToString("#0"));
+        }
+    }
+}
+```
+and read count from response header
+```csharp
+var response = await req.SendReqeust();
+if (response.HttpResponse.Headers.TryGetValues("x-total-count", out IEnumerable<string> values)
+        && values.Any()
+        && int.TryParse(values.First(), out int count))
+{
+    // do things...
+}
+```
+you can create an extension methodfor this
