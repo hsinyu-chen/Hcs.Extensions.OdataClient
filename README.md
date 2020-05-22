@@ -40,7 +40,12 @@ use `Take` and `Skip` will give you new query instance but just simple replace s
 same as `Take/Skip` but you still can use `ThenBy/ThenByDesc` for `$orderby=A asc,B asc`
 combine with take/skip will work like following
 ```
-[{a=1},{a=2},{a=3},{a=4},{a=5}].Take(4).OrderBy(x=>x.a).Take(2).Skip(1).OrderByDesc(x=>x.a)
+[{a=1},{a=2},{a=3},{a=4},{a=5}]
+.Take(4) //this will not affect query result
+.OrderBy(x=>x.a) //this will not affect query result
+.Take(2) // replace $top value to 2
+.Skip(1)
+.OrderByDesc(x=>x.a) // replace old order expressions
 ```
 will give you `$orderby=a asc&$top=5&$skip=1`
 [{a=5},{a=4}]
