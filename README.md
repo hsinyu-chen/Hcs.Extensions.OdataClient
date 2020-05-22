@@ -47,7 +47,7 @@ query.Take(4) //this will not affect query result
 .Skip(1)
 .OrderByDesc(x=>x.a) // replace old order expressions
 ```
-will give you `$orderby=a asc&$top=2&$skip=1`
+will give you `$orderby=a desc&$top=2&$skip=1`
 [{a=5},{a=4}]
 ### Select
 for reduce complexity of expression parser `Select` can only apply once to the query, `select expression` is only for generate odata $select/$expand,then lib compile the expression for local projection use(`Enumerable.Select`),lib will insert null check for you, so don't worry about null check.
