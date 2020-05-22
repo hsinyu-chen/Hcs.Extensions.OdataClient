@@ -39,7 +39,7 @@ use `Take` and `Skip` will give you new query instance but just simple replace s
 ### OrderBy
 same as `Take/Skip` but you still can use `ThenBy/ThenByDesc` for `$orderby=A asc,B asc`
 combine with take/skip will work like following
-```
+```csharp
 [{a=1},{a=2},{a=3},{a=4},{a=5}]
 .Take(4) //this will not affect query result
 .OrderBy(x=>x.a) //this will not affect query result
