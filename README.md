@@ -50,11 +50,15 @@ query.Take(4) //this will not affect query result
 will give you `$orderby=a desc&$top=2&$skip=1`
 [{a=5},{a=4}]
 ### Select
-for reduce complexity of expression parser `Select` can only apply once to the query, `select expression` is only for generate odata $select/$expand,then lib compile the expression for local projection use(`Enumerable.Select`),lib will insert nested member access null check for you (eq
+for reduce complexity of expression parser `Select` can only apply once to the query, `select expression` is only for generate odata $select/$expand,then lib compile the expression for local projection use(`Enumerable.Select`),lib will insert nested member access null check for you , for example
 ```csharp
-x=>new{x.Category.Name} => x=>new { Name=x.Category==null?x.Category.Name:default(string)}
+x = >new{ x.Category.Name }
 ```
-), so don't worry about null check.
+will modify to
+```cs
+x => new { Name = x.Category != null ? x.Category.Name : default(string) }
+```
+when use on result projection, so don't worry about null check.
 
 # Server side configuration hints for .net core 
 ### Install package
