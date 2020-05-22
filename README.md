@@ -36,6 +36,14 @@ foreach (var result in await req.SendReqeust())
 for current version of this lib `IS NOT IQueryable` implementation
 ### Take/Skip
 use `Take` and `Skip` will give you new query instance but just simple replace skip/take value,behavior is not like linq (eq ```[1,2,3,4,5].Take(5).Take(3) will get  [1,2,3]```)
+### OrderBy
+same as `Take/Skip` but you still can use `ThenBy/ThenByDesc` for `$orderby=A asc,B asc`
+combine with take/skip will work like following
+```
+[{a=1},{a=2},{a=3},{a=4},{a=5}].Take(4).OrderBy(x=>x.a).Take(2).Skip(1).OrderByDesc(x=>x.a)
+```
+will give you `$orderby=a asc&$top=5&$skip=1`
+[{a=5},{a=4}]
 ### Select
 for reduce complexity of expression parser Select can only apply once to the query,select expression is only for generate odata $select/$expand,then lib compile thie expression for local projection use
 
