@@ -47,7 +47,7 @@ will give you `$orderby=a asc&$top=5&$skip=1`
 ### Select
 for reduce complexity of expression parser Select can only apply once to the query,select expression is only for generate odata $select/$expand,then lib compile thie expression for local projection use,lib will insert null check for you,so don't worry about null check.
 
-# Server side configuration for .net core 
+# Server side configuration hints for .net core 
 ### Install package
 ```Microsoft.AspNetCore.OData```
 ### Add services
