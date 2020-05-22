@@ -32,6 +32,16 @@ foreach (var result in await req.SendReqeust())
 5 A
 
 ```
+## Limitations
+for current version of this lib `IS NOT IQueryable` implementation
+### Take/Skip
+use `Take` and `Skip` will give you new query instance but just simple replace skip/take value
+will no work like linq (eq ```[1,2,3,4,5].Take(5).Take(3) will get  [1,2,3]```)
+### Select
+for reduce complexity of expression parser Select can only apply once to the query
+select expression is only for generate odata $select/$expand,
+then lib compile thie expression for local projection use
+
 # Server side configuration for .net core 
 ### Install package
 ```Microsoft.AspNetCore.OData```
