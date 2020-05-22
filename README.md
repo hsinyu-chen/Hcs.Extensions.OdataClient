@@ -40,14 +40,14 @@ use `Take` and `Skip` will give you new query instance but just simple replace s
 same as `Take/Skip` but you still can use `ThenBy/ThenByDesc` for `$orderby=A asc,B asc`
 combine with take/skip will work like following
 ```csharp
-[{a=1},{a=2},{a=3},{a=4},{a=5}]
-.Take(4) //this will not affect query result
+// if all data is [{a:1},{a:2},{a:3},{a:4},{a:5}]
+query.Take(4) //this will not affect query result
 .OrderBy(x=>x.a) //this will not affect query result
 .Take(2) // replace $top value to 2
 .Skip(1)
 .OrderByDesc(x=>x.a) // replace old order expressions
 ```
-will give you `$orderby=a asc&$top=5&$skip=1`
+will give you `$orderby=a asc&$top=2&$skip=1`
 [{a=5},{a=4}]
 ### Select
 for reduce complexity of expression parser `Select` can only apply once to the query, `select expression` is only for generate odata $select/$expand,then lib compile the expression for local projection use(`Enumerable.Select`),lib will insert null check for you, so don't worry about null check.
