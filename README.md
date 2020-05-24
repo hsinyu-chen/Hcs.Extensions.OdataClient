@@ -32,7 +32,35 @@ foreach (var result in await req.SendReqeust())
 5 A
 
 ```
-# Server side configuration for .net core 
+## Limitations
+for current version of this lib `IS NOT IQueryable` implementation
+### Take/Skip
+use `Take` and `Skip` will give you new query instance but just simple replace skip/take value,behavior is not like linq (eq ```[1,2,3,4,5].Take(5).Take(3) will get  [1,2,3]```)
+### OrderBy
+same as `Take/Skip` but you still can use `ThenBy/ThenByDesc` for `$orderby=A asc,B asc`
+combine with take/skip will work like following
+```csharp
+// if all data is [{a:1},{a:2},{a:3},{a:4},{a:5}]
+query.Take(4) //this will not affect query result
+.OrderBy(x=>x.a) //this will not affect query result
+.Take(2) // replace $top value to 2
+.Skip(1)
+.OrderByDesc(x=>x.a) // replace old order expressions
+```
+will give you `$orderby=a desc&$top=2&$skip=1`
+[{a=5},{a=4}]
+### Select
+for reduce complexity of expression parser `Select` can only apply once to the query, `select expression` is only for generate odata $select/$expand,then lib compile the expression for local projection use(`Enumerable.Select`),lib will insert nested member access null check for you , for example
+```csharp
+x = >new{ x.Category.Name }
+```
+will modify to
+```cs
+x => new { Name = x.Category != null ? x.Category.Name : default(string) }
+```
+when use on result projection, so don't worry about null check.
+
+# Server side configuration hints for .net core 
 ### Install package
 ```Microsoft.AspNetCore.OData```
 ### Add services
@@ -105,5 +133,5 @@ if (response.HttpResponse.Headers.TryGetValues("x-total-count", out IEnumerable<
 you can create an extension methodfor this
 
 # WARNING
-I wrote this lib in rush (about 20 hours),so use with your own risk,
+I wrote this lib in rush (about 20ish hours),so use with your own risk,
 feel free to file a PR if you encounter any bugs
