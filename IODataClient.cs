@@ -13,6 +13,8 @@ namespace Hcs.Extensions.OdataClient
         public string GetQueryString(bool encode = true);
 
         public Task<OdataApiResponse<TResult>> SendReqeust();
+
+        public Task<OdataApiResponse<TModel>> SendRequestWithoutProjection();
     }
     public interface IODataClient<TModel>
     {

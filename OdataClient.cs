@@ -45,8 +45,12 @@ namespace Hcs.Extensions.OdataClient
             return new OdataApiResponse<TResult>(Projection(baseResult), baseResult.HttpResponse);
         }
 
+        public Task<OdataApiResponse<TModel>> SendRequestWithoutProjection()
+        {
+            return base.SendRequet();
+        }
     }
-    public class OdataClient<TModel> : IODataClient<TModel>, IODataClientQueryable<TModel>
+    public class OdataClient<TModel> : IODataClient<TModel>
     {
         public OdataQueryOptions<TModel> QueryOptions { get; }
 
@@ -54,7 +58,7 @@ namespace Hcs.Extensions.OdataClient
 
         public string ApiUri { get; }
 
-        public IODataClientQueryable<TModel> Clone()
+        public IODataClient<TModel> Clone()
         {
             return new OdataClient<TModel>(HttpClient, ApiUri, QueryOptions.Clone());
         }
