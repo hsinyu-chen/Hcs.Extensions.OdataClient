@@ -21,7 +21,8 @@ namespace Hcs.Extensions.Odata.Queryable
     public class OdataQueryOptions<TModel>
     {
         public List<Expression<Func<TModel, bool>>> WhereExpressions { get; } = new List<Expression<Func<TModel, bool>>>();
-        public List<OrderOption<TModel>> OrderOptions { get; } = new List<OrderOption<TModel>>();
+        public List<OrderOption<TModel>> OrderOptions { get; set; } = new List<OrderOption<TModel>>();
+        public Func<IEnumerable<KeyValuePair<string, string>>> CustomQueryParamsFactory { get; set; }
 
         public int? Take { get; set; }
         public int? Skip { get; set; }
@@ -41,6 +42,7 @@ namespace Hcs.Extensions.Odata.Queryable
             c.OrderOptions.AddRange(OrderOptions);
             c.Take = Take;
             c.Skip = Skip;
+            c.CustomQueryParamsFactory = CustomQueryParamsFactory;
             return c;
         }
 

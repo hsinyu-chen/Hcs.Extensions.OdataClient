@@ -41,6 +41,14 @@ namespace Hcs.Extensions.Odata.Queryable.Expressions
             {
                 yield return new KeyValuePair<string, string>("$count", "true");
             }
+            if (options.CustomQueryParamsFactory != null)
+            {
+                var custom = options.CustomQueryParamsFactory();
+                foreach (var kv in custom)
+                {
+                    yield return kv;
+                }
+            }
         }
     }
     public class OdataQueryBuilder<TModel, TResult> : OdataQueryBuilder<TModel>

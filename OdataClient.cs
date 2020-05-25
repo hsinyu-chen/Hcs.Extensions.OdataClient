@@ -79,7 +79,7 @@ namespace Hcs.Extensions.OdataClient
             var js = await content.ReadAsStringAsync();
 #endif
             httpResponse.EnsureSuccessStatusCode();
-           
+
             if (content.Headers.ContentType?.MediaType == "application/json")
             {
 
@@ -112,19 +112,20 @@ namespace Hcs.Extensions.OdataClient
             {
                 q.Add($"{kv.Key}={Uri.EscapeUriString(kv.Value)}");
             }
+           
             if (q.Count > 0)
             {
                 var builder = new UriBuilder(uri);
                 builder.Query = "?" + string.Join("&", q);
                 uri = builder.Uri;
             }
-
+            
             return uri;
         }
 
         protected virtual IEnumerable<KeyValuePair<string, string>> GetQuery()
         {
-            var queryBuilder = new OdataQueryBuilder<TModel, TModel>();
+            var queryBuilder = new OdataQueryBuilder<TModel>();
             return queryBuilder.Build(QueryOptions);
         }
 

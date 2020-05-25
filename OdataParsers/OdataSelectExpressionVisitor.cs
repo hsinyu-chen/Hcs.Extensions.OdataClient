@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Hcs.Extensions.OdataClient.OdataParsers
 {
-    class OdataSelectExpressionVisitor : ExpressionVisitor
+    public class OdataSelectExpressionVisitor : ExpressionVisitor
     {
         protected override Expression VisitMember(MemberExpression node)
         {
@@ -16,7 +16,7 @@ namespace Hcs.Extensions.OdataClient.OdataParsers
             var name = string.Join("/", node.GetMemberName());
             if (!map[paramter].SelectMembers.Any(x => x.MemberPath == name))
             {
-                map[paramter].SelectMembers.Add(new SelectMember { MemberPath=name, IsComplexType=!(node.Member is PropertyInfo m && m.PropertyType.IsSimpleType()) });
+                map[paramter].SelectMembers.Add(new SelectMember { MemberPath = name, IsComplexType = !(node.Member is PropertyInfo m && m.PropertyType.IsSimpleType()) });
             }
             return node;
         }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Hcs.Extensions.OdataClient.OdataParsers
 {
-    class SelectMember
+    public class SelectMember
     {
         public string MemberPath { get; set; }
         public bool IsComplexType { get; set; }
@@ -17,7 +17,7 @@ namespace Hcs.Extensions.OdataClient.OdataParsers
         }
         public override string ToString() => MemberPath;
     }
-    class OdataSelectExpand : SelectMember
+    public class OdataSelectExpand : SelectMember
     {
         public List<SelectMember> SelectMembers { get; set; } = new List<SelectMember>();
         public List<OdataSelectExpand> Childs { get; set; } = new List<OdataSelectExpand>();
