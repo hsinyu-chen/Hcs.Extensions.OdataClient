@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace Hcs.Extensions.OdataClient.Expressions
 {
-    static class ExpressionHelpers
+    public static class ExpressionHelpers
     {
         public static bool IsSimpleType(this Type type)
         {

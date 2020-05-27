@@ -59,6 +59,14 @@ namespace Hcs.Extensions.OdataClient.OdataParsers
             {
                 return base.Visit(node);
             }
+            else if (node is MemberInitExpression)
+            {
+                return base.Visit(node);
+            }
+            else if (node.NodeType == ExpressionType.Convert && node is UnaryExpression u)
+            {
+                return base.Visit(node);
+            }
             if (node != null)
             {
                 throw new NotSupportedException($"Select not support {node.GetType()}[{node}]");
