@@ -25,6 +25,10 @@ namespace Hcs.Extensions.OdataClient.Expressions
                 (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>) && IsSimpleType(type.GetGenericArguments()[0]))
                 ;
         }
+        public static bool CheckHasParameter(this Expression expression, ParameterExpression parameter)
+        {
+            return CheckHasParameterVisitor.Check(expression, parameter);
+        }
         public static Type GetUnderlyingType(this MemberInfo member)
         {
             switch (member.MemberType)

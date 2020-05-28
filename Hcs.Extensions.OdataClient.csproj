@@ -9,9 +9,9 @@
 </Description>
     <Copyright>LICENSE</Copyright>
     <PackageProjectUrl>https://github.com/hsinyu-chen/Hcs.Extensions.OdataClient</PackageProjectUrl>
-    <Version>1.0.4</Version>
-    <AssemblyVersion>1.0.4.0</AssemblyVersion>
-    <FileVersion>1.0.4.0</FileVersion>
+    <Version>1.0.5</Version>
+    <AssemblyVersion>1.0.5.0</AssemblyVersion>
+    <FileVersion>1.0.5.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
