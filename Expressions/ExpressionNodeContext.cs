@@ -4,7 +4,7 @@ namespace Hcs.Extensions.Odata.Queryable.Expressions
 {
     public class ExpressionNodeContext
     {
-        public Expression Node { get; set; }
+        public Expression Node { get; }
         public Expression ReferenceNode { get; set; }
         public ExpressionNodeContext ParentContext { get; set; }
         public ParameterExpression ModelParameter { get; }

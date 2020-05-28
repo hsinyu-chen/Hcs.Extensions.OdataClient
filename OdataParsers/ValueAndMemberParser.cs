@@ -9,7 +9,7 @@ namespace Hcs.Extensions.Odata.Queryable.OdataParsers
                name: nameof(ValueAndMemberParser),
                parsers: new IExpressionParser[]
                {
-                       new NoParameterParser(),
+                       new LocalExpressionParser(),
                        new ConstantBinaryNodeParser(),
                        new MemberBinaryNodeParser(),
                        new UnaryParser(),
