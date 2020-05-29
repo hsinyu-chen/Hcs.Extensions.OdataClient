@@ -1,6 +1,7 @@
 ﻿using Hcs.Extensions.Odata.Queryable;
 using Hcs.Extensions.Odata.Queryable.Expressions;
 using Hcs.Extensions.OdataClient.Expressions;
+using Hcs.Extensions.OdataClient.ResultParsers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,8 +42,18 @@ namespace Hcs.Extensions.OdataClient
         }
         public async Task<OdataApiResponse<TResult>> SendReqeust()
         {
-            var baseResult = await base.SendRequet();
-            return new OdataApiResponse<TResult>(Projection(baseResult), baseResult.HttpResponse);
+            var uri = CreateRequestUrl();
+            var response = await SendRequestAsnyc(HttpClient, uri);
+            if (QueryOptions.Take.HasValue || QueryOptions.Skip.HasValue)
+            {
+                var (count, data) = await ResultParser.ParseCountedAsync(response);
+                return new OdataApiResponse<TResult>(Projection(data), count, response);
+            }
+            else
+            {
+                var data = await ResultParser.ParseAsync(response);
+                return new OdataApiResponse<TResult>(Projection(data), null, response);
+            }
         }
 
         public Task<OdataApiResponse<TModel>> SendRequestWithoutProjection()
@@ -52,6 +63,8 @@ namespace Hcs.Extensions.OdataClient
     }
     public class OdataClient<TModel> : IODataClient<TModel>
     {
+        public IApiResultParser<TModel> ResultParser { get; set; }
+
         public OdataQueryOptions<TModel> QueryOptions { get; }
 
         public HttpClient HttpClient { get; }
@@ -65,30 +78,13 @@ namespace Hcs.Extensions.OdataClient
         public OdataClient(
             HttpClient client,
             string apiUri,
-            OdataQueryOptions<TModel> queryOptions = null)
+            OdataQueryOptions<TModel> queryOptions = null,
+            IApiResultParser<TModel> resultParser = null)
         {
             this.HttpClient = client;
             this.ApiUri = apiUri;
             QueryOptions = queryOptions ?? new OdataQueryOptions<TModel>();
-        }
-        protected virtual async ValueTask<IEnumerable<TModel>> ParseResponseAsync(HttpResponseMessage httpResponse)
-        {
-            var content = httpResponse.Content;
-#if DEBUG
-
-            var js = await content.ReadAsStringAsync();
-#endif
-            httpResponse.EnsureSuccessStatusCode();
-
-            if (content.Headers.ContentType?.MediaType == "application/json")
-            {
-
-                return await JsonSerializer.DeserializeAsync<TModel[]>(await content.ReadAsStreamAsync());
-            }
-            else
-            {
-                throw new NotSupportedException($"default {nameof(ParseResponseAsync)} only support json response");
-            }
+            ResultParser = resultParser ?? new HeaderCountResultParser<TModel>();
         }
         protected virtual async ValueTask<HttpResponseMessage> SendRequestAsnyc(HttpClient client, Uri odataUrl)
         {
@@ -99,8 +95,16 @@ namespace Hcs.Extensions.OdataClient
         {
             var uri = CreateRequestUrl();
             var response = await SendRequestAsnyc(HttpClient, uri);
-            var data = await ParseResponseAsync(response);
-            return new OdataApiResponse<TModel>(data, response);
+            if (QueryOptions.Take.HasValue || QueryOptions.Skip.HasValue)
+            {
+                var (count, data) = await ResultParser.ParseCountedAsync(response);
+                return new OdataApiResponse<TModel>(data, count, response);
+            }
+            else
+            {
+                var data = await ResultParser.ParseAsync(response);
+                return new OdataApiResponse<TModel>(data, null, response);
+            }
         }
 
         protected virtual Uri CreateRequestUrl()
@@ -112,14 +116,14 @@ namespace Hcs.Extensions.OdataClient
             {
                 q.Add($"{kv.Key}={Uri.EscapeUriString(kv.Value)}");
             }
-           
+
             if (q.Count > 0)
             {
                 var builder = new UriBuilder(uri);
                 builder.Query = "?" + string.Join("&", q);
                 uri = builder.Uri;
             }
-            
+
             return uri;
         }
 

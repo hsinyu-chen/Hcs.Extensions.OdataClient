@@ -104,6 +104,7 @@ public class FileManageController : ControllerBase
 }
 ```
 # Count
+Default ResultParser get count from response header
 you can replace odata's EnableQueryAttribute to custom ```ActionFilter``` like this
 ```csharp
 public class HcsEnableQueryAttribute : EnableQueryAttribute
@@ -120,18 +121,11 @@ public class HcsEnableQueryAttribute : EnableQueryAttribute
     }
 }
 ```
-and read count from response header
+you can parse other result parser to OdataClient constructor for your endpoint response format
 ```csharp
-var response = await req.SendReqeust();
-if (response.HttpResponse.Headers.TryGetValues("x-total-count", out IEnumerable<string> values)
-        && values.Any()
-        && int.TryParse(values.First(), out int count))
-{
-    // do things...
-}
+new OdataClient<File>(httpClient,"/api/FileManage",resultParser:new PageResultParser<File>())
 ```
-you can create an extension methodfor this
-
+PageResultParser is built-in parser for starndard odata endpoint
 # WARNING
 I wrote this lib in rush (about 20ish hours),so use with your own risk,
 feel free to file a PR if you encounter any bugs

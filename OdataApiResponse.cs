@@ -8,10 +8,12 @@ namespace Hcs.Extensions.OdataClient
     {
         public IEnumerable<TModel> Data { get; }
         public HttpResponseMessage HttpResponse { get; }
-        public OdataApiResponse(IEnumerable<TModel> data, HttpResponseMessage response)
+        public long? Count { get; }
+        public OdataApiResponse(IEnumerable<TModel> data, long? count, HttpResponseMessage response)
         {
-            Data = data;
             HttpResponse = response;
+            Data = data;
+            Count = count;
         }
 
         public IEnumerator<TModel> GetEnumerator() => Data.GetEnumerator();
