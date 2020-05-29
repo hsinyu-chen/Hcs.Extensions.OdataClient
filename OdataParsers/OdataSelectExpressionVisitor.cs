@@ -1,4 +1,5 @@
-﻿using Hcs.Extensions.OdataClient.Expressions;
+﻿using Hcs.Extensions.Odata.Queryable.OdataParsers;
+using Hcs.Extensions.OdataClient.Expressions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,14 +23,61 @@ namespace Hcs.Extensions.OdataClient.OdataParsers
         }
         protected override Expression VisitMethodCall(MethodCallExpression node)
         {
-            var member = node.Arguments[0] as MemberExpression;
+            if (node.Method.Name == nameof(Enumerable.Select))
+            {
+                if (node.Arguments[0] is MemberExpression member)
+                {
+                    var lamd = node.Arguments[1] as LambdaExpression;
+                    AddExpand(lamd, member);
+                    return base.VisitMethodCall(node);
+                }
+                else if (node.Arguments[0] is MethodCallExpression chain)
+                {
+                    return VistWhere(chain, node);
+                }
+            }
+            else if (node.Method.Name == nameof(Enumerable.Where))
+            {
+                return VistWhere(node, node);
+            }
+            throw new NotSupportedException($"Not Supported method call [{node}]");
+        }
+        protected Expression VistWhere(MethodCallExpression node, MethodCallExpression root)
+        {
+            var filters = new List<string>();
+            MemberExpression BuildFilter(MethodCallExpression sub)
+            {
+                if (node.Method.DeclaringType == typeof(Enumerable) && node.Method.Name == nameof(Enumerable.Where))
+                {
+                    var filter = LambdaFilterParser.Parse(sub.Arguments[1] as LambdaExpression);
+                    filters.Add(filter);
+                    if (node.Arguments[0] is MethodCallExpression next)
+                    {
+                        return BuildFilter(next);
+                    }
+                    else if (node.Arguments[0] is MemberExpression m)
+                    {
+                        return m;
+                    }
+                }
+                throw new NotSupportedException($"Child Select can only has Where beetween member and Select [{sub}]");
+            }
+            var rootMember = BuildFilter(node);
+            AddExpand(node.Arguments[1] as LambdaExpression, rootMember, string.Join(" and ", filters));
+            if (root != node)
+            {
+                return base.Visit(Expression.Call(null, root.Method, rootMember, root.Arguments[1]));
+            }
+            return root;
+        }
+        private void AddExpand(LambdaExpression lamd, MemberExpression member, string filter = null)
+        {
             var parent = member.GetRoot() as ParameterExpression;
-            var lamd = node.Arguments[1] as LambdaExpression;
             var path = string.Join("/", member.GetMemberName());
             var c = map[parent].Childs.Where(x => x.MemberPath == path).FirstOrDefault();
             if (c == null)
             {
-                map.Add(lamd.Parameters[0], new OdataSelectExpand { MemberPath = path });
+                map.Add(lamd.Parameters[0], new OdataSelectExpand { MemberPath = path, Filter = filter });
 
                 map[parent].Childs.Add(map[lamd.Parameters[0]]);
             }
@@ -37,10 +85,14 @@ namespace Hcs.Extensions.OdataClient.OdataParsers
             {
                 map.Add(lamd.Parameters[0], c);
             }
-            return base.VisitMethodCall(node);
         }
+
         public override Expression Visit(Expression node)
         {
+            if (node == null)
+            {
+                return base.Visit(node);
+            }
             if (node is LambdaExpression || node is NewExpression || node is MemberExpression)
             {
                 return base.Visit(node);
@@ -50,6 +102,10 @@ namespace Hcs.Extensions.OdataClient.OdataParsers
                 if (call.Method.DeclaringType == typeof(Enumerable))
                 {
                     if (call.Method.Name == nameof(Enumerable.Select))
+                    {
+                        return base.Visit(node);
+                    }
+                    else if (call.Method.Name == nameof(Enumerable.Where))
                     {
                         return base.Visit(node);
                     }

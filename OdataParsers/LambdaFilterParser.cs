@@ -29,7 +29,7 @@ namespace Hcs.Extensions.Odata.Queryable.OdataParsers
         {
         }
         readonly static LambdaFilterParser instance = new LambdaFilterParser();
-        public static string Parse<TModel>(Expression<Func<TModel, bool>> expression)
+        public static string Parse(LambdaExpression expression)
         {
             var root = new ExpressionNodeContext(expression, null);
             if (instance.TryParse(new ExpressionNodeContext(expression.Body, expression.Parameters[0]) { ParentContext = root }, false, out string output))

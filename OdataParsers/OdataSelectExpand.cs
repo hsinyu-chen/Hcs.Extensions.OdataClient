@@ -21,6 +21,7 @@ namespace Hcs.Extensions.OdataClient.OdataParsers
     {
         public List<SelectMember> SelectMembers { get; set; } = new List<SelectMember>();
         public List<OdataSelectExpand> Childs { get; set; } = new List<OdataSelectExpand>();
+        public string Filter { get; set; }
         public override string ToString()
         {
             return MemberPath == null ? "root" : MemberPath;
@@ -49,7 +50,7 @@ namespace Hcs.Extensions.OdataClient.OdataParsers
         {
 
             var newTree = new OdataSelectExpand();
-            OdataSelectExpand seekTree(IEnumerable<SelectMember> path)
+            OdataSelectExpand seekTree(IEnumerable<SelectMember> path, OdataSelectExpand old = null)
             {
                 var n = newTree;
                 foreach (var p in path)
@@ -57,7 +58,7 @@ namespace Hcs.Extensions.OdataClient.OdataParsers
                     var c = n.Childs.FirstOrDefault(x => x.MemberPath == p.MemberPath);
                     if (c == null)
                     {
-                        c = new OdataSelectExpand { MemberPath = p.MemberPath, IsComplexType = true };
+                        c = new OdataSelectExpand { MemberPath = p.MemberPath, IsComplexType = true, Filter = old?.Filter };
                         n.Childs.Add(c);
                     }
                     n = c;
@@ -68,7 +69,7 @@ namespace Hcs.Extensions.OdataClient.OdataParsers
             void recCreate(OdataSelectExpand current, IEnumerable<SelectMember> path)
             {
                 var currentPath = path;
-                var n = seekTree(path);
+                var n = seekTree(path, current);
                 foreach (var m in current.SelectMembers)
                 {
                     var p = m.Split();
@@ -104,7 +105,10 @@ namespace Hcs.Extensions.OdataClient.OdataParsers
                 var parts = new List<string>();
 
                 var select = c.GetSelect();
-
+                if (c.Filter != null)
+                {
+                    parts.Add($"$filter={c.Filter}");
+                }
                 if (select.Any())
                 {
                     parts.Add($"$select={string.Join(",", select)}");
