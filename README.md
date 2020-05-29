@@ -121,7 +121,7 @@ public class HcsEnableQueryAttribute : EnableQueryAttribute
     }
 }
 ```
-you can parse other result parser to OdataClient constructor for your endpoint response format
+you can parse other result parser to OdataClient constructor for your response format
 ```csharp
 new OdataClient<File>(httpClient,"/api/FileManage",resultParser:new PageResultParser<File>())
 ```
